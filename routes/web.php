@@ -20,4 +20,6 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
-Route::get('/albums', 'AlbumController@create');
+Route::get('/albums/create', 'AlbumController@create')->middleware('auth');
+Route::post('/albums/store', 'AlbumController@store')->middleware('auth');
+

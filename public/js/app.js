@@ -1908,6 +1908,9 @@ module.exports = {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -1928,6 +1931,28 @@ __webpack_require__.r(__webpack_exports__);
         _this.categories = response.data;
       })["catch"](function (error) {
         alert('unable to fetch categories');
+      });
+    },
+    onImageChange: function onImageChange(e) {
+      console.log(e);
+      this.image = e.target.files[0];
+    },
+    createAlbum: function createAlbum() {
+      var _this2 = this;
+      var config = {
+        header: {
+          "content-type": "multipart/form-data"
+        }
+      };
+      var formdata = new FormData();
+      formdata.append('image', this.image);
+      formdata.append('name', this.name);
+      formdata.append('description', this.description);
+      formdata.append('category_id', this.category);
+      axios.post('/albums/store', formdata, config).then(function (response) {
+        _this2.image = '', _this2.name = '', _this2.description = '', _this2.category = '';
+      })["catch"](function (error) {
+        console.log(error);
       });
     }
   }
@@ -1968,11 +1993,17 @@ var render = function render() {
     _c = _vm._self._c;
   return _c("div", [_vm._v("\n        Album component\n\n            "), _c("form", {
     attrs: {
-      action: ""
+      enctype: "multipart/form-data"
+    },
+    on: {
+      submit: function submit($event) {
+        $event.preventDefault();
+        return _vm.createAlbum.apply(null, arguments);
+      }
     }
   }, [_c("div", {
     staticClass: "form-group"
-  }, [_vm._v("\n                    " + _vm._s(_vm.categories) + "\n                "), _c("label", {
+  }, [_c("label", {
     attrs: {
       "for": ""
     }
@@ -2041,8 +2072,7 @@ var render = function render() {
     }],
     staticClass: "form-control",
     attrs: {
-      name: "category",
-      id: ""
+      name: "category"
     },
     on: {
       change: function change($event) {
@@ -2055,20 +2085,14 @@ var render = function render() {
         _vm.category = $event.target.multiple ? $$selectedVal : $$selectedVal[0];
       }
     }
-  }, [_c("option", {
-    attrs: {
-      value: ""
-    }
-  }, [_vm._v("Select Category")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: ""
-    }
-  }, [_vm._v("Select Category")])])]), _vm._v(" "), _vm._m(0), _vm._v(" "), _vm._m(1)])]);
-};
-var staticRenderFns = [function () {
-  var _vm = this,
-    _c = _vm._self._c;
-  return _c("div", {
+  }, _vm._l(_vm.categories, function (category, index) {
+    return _c("option", {
+      key: index,
+      domProps: {
+        value: category.id
+      }
+    }, [_vm._v(_vm._s(category.name))]);
+  }), 0)]), _vm._v(" "), _c("div", {
     staticClass: "form-group"
   }, [_c("label", {
     attrs: {
@@ -2080,9 +2104,13 @@ var staticRenderFns = [function () {
       type: "file",
       name: "image",
       maxlength: "15"
+    },
+    on: {
+      change: _vm.onImageChange
     }
-  })]);
-}, function () {
+  })]), _vm._v(" "), _vm._m(0)])]);
+};
+var staticRenderFns = [function () {
   var _vm = this,
     _c = _vm._self._c;
   return _c("div", {
